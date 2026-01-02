@@ -1,69 +1,26 @@
 package main
 
 import (
-	"net/http"
+	"belajar-golang/handler"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
+	v1 := router.Group("/v1")
 
-	router.GET("/", rootHandler)
-	router.GET("/products", prodHandler)
-	router.GET("/products/:id", prodIdHandler)
-	router.GET("/querry",querryHandler)
+	v1.GET("/", handler.RootHandler)
+	v1.GET("/products", handler.ProdHandler)
+	v1.GET("/products/:id", handler.ProdIdHandler)
+	v1.GET("/querry",handler.QuerryHandler)
+	v1.POST("/products", handler.PostProductHandler)
 
-	router.POST("/products", postProductHandler)
 
 	router.Run(":9000")
 } 
 
-func rootHandler(c *gin.Context){
-	c.JSON(http.StatusOK, gin.H{
-			"name": "rayhan marcello",
-		})
-}
 
-func prodHandler(c *gin.Context){
-	c.JSON(http.StatusOK,gin.H{
-			"product" : "cireng", 
-		})
-}
 
-func prodIdHandler(c *gin.Context){
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{
-		"id-product" : id,
-	})
-}
-
-func querryHandler(c *gin.Context){
-	title := c.Query("title")
-	c.JSON(http.StatusOK, gin.H{
-		"title" : title,
-	})
-}
-
-type ProductInput struct{
-	Name string	`json:"name" binding:"required"`
-	Price int	`json:"price" binding:"required,number"` 
-}
-
-func postProductHandler(c *gin.Context){
-	var productInput ProductInput
-	err := c.ShouldBindBodyWithJSON(&productInput)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"err-message" : err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"name" : productInput.Name,
-		"price" : productInput.Price,
-	})
-}
 
 
