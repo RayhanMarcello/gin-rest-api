@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -47,15 +46,18 @@ func querryHandler(c *gin.Context){
 }
 
 type ProductInput struct{
-	Name string	`json:"name"`
-	Price int	`json:"price"`
+	Name string	`json:"name" binding:"required"`
+	Price int	`json:"price" binding:"required,number"` 
 }
 
 func postProductHandler(c *gin.Context){
 	var productInput ProductInput
 	err := c.ShouldBindBodyWithJSON(&productInput)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err-message" : err.Error(),
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -63,3 +65,5 @@ func postProductHandler(c *gin.Context){
 		"price" : productInput.Price,
 	})
 }
+
+
