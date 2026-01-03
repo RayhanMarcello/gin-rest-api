@@ -1,27 +1,30 @@
 package main
 
 import (
+	// "belajar-golang/handler"
+	// "belajar-golang/product"
+	// "fmt"
+	"belajar-golang/database"
 	"belajar-golang/handler"
-	"belajar-golang/product"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 func main() {
 	router := gin.Default()
 
-	dsn := "app:root@tcp(127.0.0.1:3306)/belajar_golang?charset=utf8mb4&parseTime=True&loc=Local"
-  	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil{
-		fmt.Println("connection db err")
-	}
+	database.ConnectionDatabase()
 
-	fmt.Println("db connection sucsess")
-
-	db.AutoMigrate(&product.Product{})
+	//CRUD
+	// prod := product.Product{}
+	// prod.Name = "cireng2"
+	// prod.Price = 200002
+	// prod.Description = "cireng makanan yang enak 2"
+	// prod.Rating = 52
+	// err = db.Create(&prod).Error
+	// if err != nil{
+	// 	fmt.Println("cannot create to db")
+	// }
 
 	v1 := router.Group("/v1")
 
