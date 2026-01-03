@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"belajar-golang/database"
 	"belajar-golang/product"
 
 	"github.com/gin-gonic/gin"
@@ -34,8 +35,24 @@ func QuerryHandler(c *gin.Context) {
 	})
 }
 
+// func PostProductHandler(c *gin.Context) {
+// 	var productInput product.ProductInput
+// 	err := c.ShouldBindBodyWithJSON(&productInput)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"err-message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"name":  productInput.Name,
+// 		"price": productInput.Price,
+// 	})
+// }
+
 func PostProductHandler(c *gin.Context) {
-	var productInput product.ProductInput
+	var productInput product.Product
 	err := c.ShouldBindBodyWithJSON(&productInput)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -44,9 +61,15 @@ func PostProductHandler(c *gin.Context) {
 		return
 	}
 
+	if err := database.DB.Create(&productInput).Error; err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"err" : "failed",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"name":  productInput.Name,
-		"price": productInput.Price,
+		"message" : "sucsess create product",
+		"datas" : productInput,
 	})
 }
-
